@@ -12,6 +12,6 @@ export function messageScheduleArray(array: number[], block: number[]): void {
     for (let i = 16; i < 64; i++) {
         const s0 = rightRotate(array[i - 15], 7) ^ rightRotate(array[i - 15], 18) ^ (array[i - 15] >>> 3);
         const s1 = rightRotate(array[i - 2], 17) ^ rightRotate(array[i - 2], 19) ^ (array[i - 2] >>> 10)
-        array[i] = safeAdd(safeAdd(safeAdd(array[i - 16], s0), array[i - 7]), s1);
+        array[i] = safeAdd(array[i - 16], s0, array[i - 7], s1);
     }
 }
