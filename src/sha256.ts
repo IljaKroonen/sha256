@@ -3,6 +3,7 @@ import {messageScheduleArray} from './message-schedule-array';
 import {stringBlockToUint32Array} from './string-block-to-uint32-array';
 import {compression} from './compression';
 import {messageAppend} from './message-append';
+import {uint32ArrayToHexString} from './uint32-array-to-hex-string';
 
 export class Sha256 {
     private addedLength = 0;
@@ -31,7 +32,7 @@ export class Sha256 {
         if (this.addedLength > this.length)
             throw new Error('Cannot get hash value because too many bytes have been added');
 
-        return JSON.stringify(this.hash);
+        return uint32ArrayToHexString(this.hash);
     }
 
     private addInternal(part: string) {

@@ -7,32 +7,39 @@ export function compression(hash: number[], scheduleArray: number[]) {
     if (scheduleArray.length !== 64)
         throw new Error('Parameter "scheduleArray" should have a length of 64');
 
-    const workingVariables = hash.slice();
+    let a = hash[0];
+    let b = hash[1];
+    let c = hash[2];
+    let d = hash[3];
+    let e = hash[4];
+    let f = hash[5];
+    let g = hash[6];
+    let h = hash[7];
 
     for (let i = 0; i < 64; i++) {
-        const s1 = rightRotate(workingVariables[4], 6) ^ rightRotate(workingVariables[4], 11) ^ rightRotate(workingVariables[4], 25);
-        const ch = (workingVariables[4] & workingVariables[5]) ^ ((~workingVariables[4]) & workingVariables[6]);
-        const temp1 = safeAdd(workingVariables[7], s1, ch, roundConstants[i], workingVariables[i]);
-        const s0 = rightRotate(workingVariables[0], 2) ^ rightRotate(workingVariables[0], 13) ^ rightRotate(workingVariables[0], 22);
-        const maj = (workingVariables[0] & workingVariables[1]) ^ (workingVariables[0] & workingVariables[2]) ^ (workingVariables[1] & workingVariables[2]);
+        const s1 = rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25);
+        const ch = (e & f) ^ ((~e) & g);
+        const temp1 = safeAdd(h, s1, ch, roundConstants[i], scheduleArray[i]);
+        const s0 = rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22);
+        const maj = (a & b) ^ (a & c) ^ (b & c);
         const temp2 = safeAdd(s0, maj);
 
-        workingVariables[7] = workingVariables[6];
-        workingVariables[6] = workingVariables[5];
-        workingVariables[5] = workingVariables[4];
-        workingVariables[4] = safeAdd(workingVariables[3], temp1);
-        workingVariables[3] = workingVariables[2];
-        workingVariables[2] = workingVariables[1];
-        workingVariables[1] = workingVariables[0];
-        workingVariables[0] = safeAdd(temp1, temp2);
+        h = g;
+        g = f;
+        f = e;
+        e = safeAdd(d, temp1);
+        d = c;
+        c = b;
+        b = a;
+        a = safeAdd(temp1, temp2);
     }
 
-    hash[0] = safeAdd(hash[0], workingVariables[0]);
-    hash[1] = safeAdd(hash[1], workingVariables[1]);
-    hash[2] = safeAdd(hash[2], workingVariables[2]);
-    hash[3] = safeAdd(hash[3], workingVariables[3]);
-    hash[4] = safeAdd(hash[4], workingVariables[4]);
-    hash[5] = safeAdd(hash[5], workingVariables[5]);
-    hash[6] = safeAdd(hash[6], workingVariables[6]);
-    hash[7] = safeAdd(hash[7], workingVariables[7]);
+    hash[0] = safeAdd(hash[0], a);
+    hash[1] = safeAdd(hash[1], b);
+    hash[2] = safeAdd(hash[2], c);
+    hash[3] = safeAdd(hash[3], d);
+    hash[4] = safeAdd(hash[4], e);
+    hash[5] = safeAdd(hash[5], f);
+    hash[6] = safeAdd(hash[6], g);
+    hash[7] = safeAdd(hash[7], h);
 }
