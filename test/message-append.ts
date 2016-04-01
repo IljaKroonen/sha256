@@ -1,5 +1,5 @@
 import {test} from './test';
-import {uint64ToBinaryString, messageAppend} from '../src/message-append';
+import {uint64ToBinaryString, messageAppend} from '../src/sha256';
 
 export function run() {
     const str12 = uint64ToBinaryString(12);

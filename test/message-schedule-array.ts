@@ -1,6 +1,5 @@
 import {test} from './test';
-import {messageScheduleArray} from '../src/message-schedule-array';
-import {stringBlockToUint32Array} from '../src/string-block-to-uint32-array';
+import {messageScheduleArray, stringBlockToUint32Array} from '../src/sha256';
 
 export function run() {
     (function() {
@@ -13,7 +12,7 @@ export function run() {
             671566688, -1382400624, 1453396922, 1098177807, -1353644483, 358614802, 1652279077, -1795223747,
             -1643439874, -1062665663, 1115449349, 1925303655, -1806868409, 1193861204, 276032441, -1896671296,
             753687837, 334136815, -1871147933, 390903710, 1968558165, -1437604575, -299525345, -120802659];
-            
+
         const block = stringBlockToUint32Array('abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd');
         messageScheduleArray(actual, block);
 

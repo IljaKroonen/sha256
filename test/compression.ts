@@ -1,13 +1,9 @@
-import {compression} from '../src/compression';
+import {compression, roundConstants, messageScheduleArray, uint32ArrayToHexString} from '../src/sha256';
 import {test} from './test';
-import {roundConstants} from '../src/round-constants';
-import {messageScheduleArray} from '../src/message-schedule-array';
-import {initialHash} from '../src/initial-hash';
-import {uint32ArrayToHexString} from '../src/uint32-array-to-hex-string';
 
 export function run() {
     (function() {
-        const initial = initialHash();
+        const initial = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
 
         const scheduleArray = new Array(64);
         messageScheduleArray(scheduleArray, [1684370032, -2147483648, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4]);

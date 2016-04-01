@@ -1,5 +1,5 @@
 import {test} from './test';
-import {stringBlockToUint32Array} from '../src/string-block-to-uint32-array';
+import {stringBlockToUint32Array} from '../src/sha256';
 
 export function run() {
     const expected = [
