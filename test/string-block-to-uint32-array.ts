@@ -1,7 +1,7 @@
-import {expect} from './expect';
+import {test} from './test';
 import {stringBlockToUint32Array} from '../src/string-block-to-uint32-array';
 
-export function test() {
+export function run() {
     const expected = [
         1633837924, 1633837924, 1633837924, 1633837924,
         1633837924, 1633837924, 1633837924, 1633837924,
@@ -10,9 +10,7 @@ export function test() {
 
     const actual = stringBlockToUint32Array('abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd');
 
-    expect(actual.length).toBe(expected.length);
+    test('stringBlockToUint32Array must return an array of the correct length').expect(actual.length).toBe(expected.length);
 
-    for (let i = 0; i < expected.length; i++) {
-        expect(expected[i]).toBe(actual[i]);
-    }
+    test('stringBlockToUint32Array must return the correct array').expect(expected).toBe(actual);
 }

@@ -38,6 +38,6 @@ export function messageAppend(length: number): string {
         zeroesLength = zeroesLength + 64;
 
     append += zeroString(zeroesLength);
-    append += uint64ToBinaryString(length);
+    append += uint64ToBinaryString(length * 8);
     return append;
 }

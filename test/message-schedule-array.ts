@@ -1,8 +1,8 @@
-import {expect} from './expect';
+import {test} from './test';
 import {messageScheduleArray} from '../src/message-schedule-array';
 import {stringBlockToUint32Array} from '../src/string-block-to-uint32-array';
 
-export function test() {
+export function run() {
     (function() {
         const actual = new Array(64);
         const expected = [1633837924, 1633837924, 1633837924, 1633837924, 1633837924, 1633837924, 1633837924, 1633837924,
@@ -17,6 +17,6 @@ export function test() {
         const block = stringBlockToUint32Array('abcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcdabcd');
         messageScheduleArray(actual, block);
 
-        expect(actual).toBe(expected);
+        test('message schedule array should get filled correctly').expect(actual).toBe(expected);
     })();
 }

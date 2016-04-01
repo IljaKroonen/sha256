@@ -6,10 +6,10 @@ import * as messageScheduleArray from './message-schedule-array';
 import * as compression from './compression';
 import * as sha256 from './sha256';
 
-stringBlockToUint32Array.test();
-messageAppend.test();
-uint32ArrayToHexString.test();
-operators.test();
-messageScheduleArray.test();
-compression.test();
-sha256.test();
+stringBlockToUint32Array.run();
+messageAppend.run();
+uint32ArrayToHexString.run();
+operators.run();
+messageScheduleArray.run();
+compression.run();
+sha256.run();
