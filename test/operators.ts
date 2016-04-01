@@ -1,15 +1,15 @@
-import {safeAdd, rightRotate} from '../src/sha256';
+import {safeAdd2, rightRotate} from '../src/sha256';
 import {test} from './test';
 
 export function run() {
     (function() {
-        const actual = safeAdd(1, 3);
+        const actual = safeAdd2(1, 3);
         const expected = 4;
         test('safeAdd should correctly compute 1 + 3').expect(actual).toBe(expected);
     })();
 
     (function() {
-        const actual = safeAdd(Math.pow(2, 31), 1000);
+        const actual = safeAdd2(Math.pow(2, 31), 1000);
         const expected = 1000 - Math.pow(2, 31);
         test('safeAdd should correctly compute overflowing 32bits addition').expect(actual).toBe(expected);
     })();

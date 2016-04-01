@@ -12,7 +12,7 @@ export function rightRotate(word: number, n: number): number {
     return (word >>> n) | (word << (32 - n));
 }
 
-function safeAdd2(a: number, b: number) {
+export function safeAdd2(a: number, b: number) {
     return (a + b) | 0;
 }
 
