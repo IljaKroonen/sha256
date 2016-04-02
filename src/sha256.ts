@@ -189,3 +189,29 @@ export class Sha256 {
         compression(this.hash, this.scheduleArray);
     }
 }
+
+export function sha256(input: string | Blob, callback: (hash: string) => any) {
+    if (typeof input === 'string') {
+        const o = new Sha256(input.length);
+        o.add(input);
+        callback(o.get());
+    } else if (input instanceof Blob) {
+        const o = new Sha256(input.size);
+        const fr = new FileReader();
+        let pos = 0;
+        fr.addEventListener('load', () => {
+            o.add(fr.result);
+            if (pos > input.size)
+                callback(o.get());
+            else {
+                const blob = input.slice(pos, 1024 * 1024);
+                pos += 1024 * 1024;
+                fr.readAsBinaryString(blob);
+            }
+        });
+        const blob = input.slice(pos, 1024 * 1024);
+        pos += 1024 * 1024;
+    } else {
+        throw new Error('Input type not supported');
+    }
+}

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>SHA256</title>
+
+    <script src="sha256.js"></script>
+</head>
+
+<body>
+    <input type="file"></input>
+    <span></span>
+
+    <script>
+        const input = document.querySelector('input');
+        const output = document.querySelector('span');
+        input.addEventListener('change', () => {
+            if (!input.value)
+                return;
+                
+            const file = input.files[0];
+            
+            const fr = new FileReader(file);
+            fr.addEventListener('load', () => {
+                const sha256 = new Sha256(fr.result.length);
+                sha256.add(fr.result);
+                output.innerText = sha256.get();
+            });
+            
+            fr.readAsBinaryString(file);
+        });
+    </script>
+</body>
+
+</html>
