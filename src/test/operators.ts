@@ -1,4 +1,4 @@
-import {safeAdd2, rightRotate} from '../src/sha256';
+import {safeAdd2, rightRotate} from '../main/sha256';
 import {test} from './test';
 
 export function run() {

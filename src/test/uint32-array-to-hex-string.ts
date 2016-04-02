@@ -1,5 +1,5 @@
 import {test} from './test';
-import {uint32ArrayToHexString} from '../src/sha256';
+import {uint32ArrayToHexString} from '../main/sha256';
 
 export function run() {
     (function() {

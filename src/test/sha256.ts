@@ -1,4 +1,4 @@
-import {Sha256} from '../src/sha256';
+import {Sha256} from '../main/sha256';
 import {test} from './test';
 
 export function run() {

@@ -1,5 +1,5 @@
 import {test} from './test';
-import {uint64ToBinaryString, messageAppend} from '../src/sha256';
+import {uint64ToBinaryString, messageAppend} from '../main/sha256';
 
 export function run() {
     const str12 = uint64ToBinaryString(12);

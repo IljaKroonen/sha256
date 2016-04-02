@@ -19,16 +19,7 @@
             if (!input.value)
                 return;
                 
-            const file = input.files[0];
-            
-            const fr = new FileReader(file);
-            fr.addEventListener('load', () => {
-                const sha256 = new Sha256(fr.result.length);
-                sha256.add(fr.result);
-                output.innerText = sha256.get();
-            });
-            
-            fr.readAsBinaryString(file);
+            sha256(input.files[0], hash => output.innerText = hash);
         });
     </script>
 </body>

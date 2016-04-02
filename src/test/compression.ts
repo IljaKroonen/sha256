@@ -1,4 +1,4 @@
-import {compression, roundConstants, messageScheduleArray, uint32ArrayToHexString} from '../src/sha256';
+import {compression, roundConstants, messageScheduleArray, uint32ArrayToHexString} from '../main/sha256';
 import {test} from './test';
 
 export function run() {
