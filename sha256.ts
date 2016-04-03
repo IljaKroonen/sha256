@@ -183,8 +183,13 @@
             compression(this.hash, this.scheduleArray);
         }
     }
+    
+    const stepSize = 1024 * 1024;
 
-    function sha256(input: string | Blob, callback: (hash: string) => any) {
+    function sha256(input: string | Blob, callback: (hash: string) => any, progress: (percent: number) => any) {
+        if (!progress)
+            progress = () => {};
+            
         if (typeof input === 'string') {
             const o = new Sha256(input.length);
             o.add(input);
@@ -195,16 +200,17 @@
             let pos = 0;
             fr.addEventListener('load', () => {
                 o.add(fr.result);
+                progress(100 * pos / input.size);
                 if (pos > input.size)
                     callback(o.get());
                 else {
-                    const blob = input.slice(pos, 1024 * 1024);
-                    pos += 1024 * 1024;
+                    const blob = input.slice(pos, pos + stepSize);
+                    pos +=stepSize;
                     fr.readAsBinaryString(blob);
                 }
             });
-            const blob = input.slice(pos, 1024 * 1024);
-            pos += 1024 * 1024;
+            const blob = input.slice(pos, pos + stepSize);
+            pos += stepSize;
             fr.readAsBinaryString(blob);
         } else {
             throw new Error('Input type not supported');

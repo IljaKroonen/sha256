@@ -5,21 +5,33 @@
     <meta charset="UTF-8">
     <title>SHA256</title>
 
-    <script src="sha256.js"></script>
+    <script src="sha256-min.js"></script>
 </head>
 
 <body>
     <input type="file"></input>
-    <span></span>
+    <div class="hash"></div>
+    <div class="progress"></div>
+    <div class="time"></div>
+    <div class="speed"></div>
 
     <script>
         const input = document.querySelector('input');
-        const output = document.querySelector('span');
+        const output = document.querySelector('.hash');
+        const progress = document.querySelector('.progress');
+        const time = document.querySelector('.time');
+        const speed = document.querySelector('.speed');
         input.addEventListener('change', () => {
             if (!input.value)
                 return;
                 
-            sha256(input.files[0], hash => output.innerText = hash);
+            const before = new Date();
+            sha256(input.files[0], hash => {
+                output.innerText = hash;
+                const elapsed = new Date() - before;
+                time.innerText = elapsed + ' ms';
+                speed.innerText = (1000 * input.files[0].size / elapsed / 1024 / 1024) + ' MB/s';
+            }, percent => progress.innerText = Math.round(percent) + ' %');
         });
     </script>
 </body>

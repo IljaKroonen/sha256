@@ -152,7 +152,10 @@
         };
         return Sha256;
     }());
-    function sha256(input, callback) {
+    var stepSize = 1024 * 1024;
+    function sha256(input, callback, progress) {
+        if (!progress)
+            progress = function () { };
         if (typeof input === 'string') {
             var o = new Sha256(input.length);
             o.add(input);
@@ -163,18 +166,18 @@
             var fr_1 = new FileReader();
             var pos_1 = 0;
             fr_1.addEventListener('load', function () {
-                console.log(pos_1);
                 o_1.add(fr_1.result);
+                progress(100 * pos_1 / input.size);
                 if (pos_1 > input.size)
                     callback(o_1.get());
                 else {
-                    var blob_1 = input.slice(pos_1, 1024 * 1024);
-                    pos_1 += 1024 * 1024;
+                    var blob_1 = input.slice(pos_1, pos_1 + stepSize);
+                    pos_1 += stepSize;
                     fr_1.readAsBinaryString(blob_1);
                 }
             });
-            var blob = input.slice(pos_1, 1024 * 1024);
-            pos_1 += 1024 * 1024;
+            var blob = input.slice(pos_1, pos_1 + stepSize);
+            pos_1 += stepSize;
             fr_1.readAsBinaryString(blob);
         }
         else {
