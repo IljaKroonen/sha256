@@ -6,9 +6,6 @@ html {
 
 body {
     margin: 0;
-}
-
-h1 {
     text-align: center;
 }
 
@@ -22,10 +19,11 @@ input {
 
 .button {
     display: inline-block;
-    padding: 0.5rem 1rem;
+    padding: 5px 10px;
     background-color: teal;
     color: white;
     cursor: pointer;
+    margin-right: 5px;
 }
 
 .button.disabled {
@@ -34,19 +32,29 @@ input {
 }
 
 .progress {
-    height: 2rem;
+    height: 1.2rem;
     overflow: hidden;
+    position: relative;
+}
+
+.progress span {
+    z-index: 2;
+    vertical-align: middle;
+    position: relative;
 }
 
 .progress>div {
     height: 100%;
-    background-color: teal;
+    background-color: lightblue;
     width: 0%;
+    position: absolute;
+    z-index: 1;
 }
 
 .results {
     display: flex;
     flex-wrap: wrap;
+    justify-content: space-around;
 }
 
 .result-card {
@@ -57,4 +65,31 @@ input {
     -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);
     -moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);
     box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);
+}
+
+.current {
+    margin: 10px;
+    border: 2px solid lightblue;
+}
+
+.hash {
+    height: 1.5rem;
+}
+
+.hash .fa {
+    display: none;
+}
+
+.hash.loading span {
+    display: inline-block;
+}
+
+.input-line {
+    margin: 10px;
+}
+
+.name {
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
 }

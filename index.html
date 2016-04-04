@@ -3,22 +3,26 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>SHA256</title>
+    <title>SHA 256 calculator</title>
 
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <script src="sha256-min.js"></script>
 </head>
 
 <body>
-    <h1>SHA256</h1>
+    <h1>SHA 256 calculator</h1>
     <div class="app-container">
-        <label for="input" class="button">Browse</label><span class="upload-label">Please select a file</span>
-        <input id="input" type="file"></input>
+        <div class="input-line">
+            <label for="input" class="button">Browse</label><span class="upload-label">Please select a file</span>
+            <input id="input" type="file"></input>
+        </div>
         <div class="current">
             <div class="name"></div>
-            <div class="hash"></div>
+            <div class="hash"><span class="fa fa-spinner fa-pulse"></span><span class="hash-holder"></span></div>
             <div class="progress">
                 <div></div>
+                <span></span>
             </div>
             <div class="time"></div>
             <div class="speed"></div>
@@ -30,7 +34,7 @@
 
     <template>
         <div class="result-card">
-            <div class="filename"></div>
+            <div class="name"></div>
             <div class="hash"></div>
             <div class="time"></div>
             <div class="speed"></div>
@@ -44,7 +48,7 @@
             state.name = name;
             state.size = size;
             state.started = new Date().getTime();
-            document.querySelector('.current .hash').innerText = '';
+            document.querySelector('.current .hash .hash-holder').innerText = '';
             document.querySelector('.current .hash').classList.add('loading');
             document.querySelector('.current .name').innerText = name;
             document.querySelector('input').setAttribute('disabled', 'disabled');
@@ -53,27 +57,34 @@
         }
         
         function update(progressPercent) {
+            if (progressPercent > 100)
+                processPercent = 100;
             const elapsed = new Date().getTime() - state.started;
             const speed = progressPercent * state.size / 100 / elapsed * 1000 / 1024 / 1024;
             document.querySelector('.current .speed').innerText = speed.toFixed(2) + ' MB/s';
             document.querySelector('.current .time').innerText = (elapsed / 1000).toFixed(2) + ' seconds elapsed';
             document.querySelector('.current .progress>div').style.width = progressPercent + '%';
+            document.querySelector('.current .progress span').innerText = progressPercent.toFixed(2) + '%';
         }
         
         function done(hash) {
             const elapsed = new Date().getTime() - state.started;
             const speed = state.size / elapsed * 1000 / 1024 / 1024;
-            document.querySelector('.current .hash').innerText = hash;
+            document.querySelector('.current .hash .hash-holder').innerText = hash;
             document.querySelector('.current .hash').classList.remove('loading');
             
             const template = document.querySelector('template').content.cloneNode(true);
-            template.querySelector('.filename').innerText = state.name;
+            template.querySelector('.name').innerText = state.name;
             template.querySelector('.hash').innerText = hash;
-            template.querySelector('.time').innerText = elapsed / 1024 + ' seconds';
-            template.querySelector('.speed').innerText = speed + 'MB/s';
-            document.querySelector('.results').appendChild(template);
-            document.querySelector('input').setAttribute('disabled', null);
+            template.querySelector('.speed').innerText = speed.toFixed(2) + 'MB/s';
+            template.querySelector('.time').innerText = (elapsed / 1024).toFixed(2) + ' seconds';
+            
+            document.querySelector('.results').insertBefore(template, document.querySelector('.results>div'));
+            
+            document.querySelector('input').removeAttribute('disabled');
             document.querySelector('label').classList.remove('disabled');
+            
+            document.querySelector('.current .progress span').innerText = '100 %';
         }
         
         const input = document.querySelector('input');
@@ -83,7 +94,6 @@
                 
             add(input.files[0].name, input.files[0].size);
                 
-            const before = new Date();
             sha256(input.files[0], done, update);
         });
     </script>
