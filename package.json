@@ -7,7 +7,7 @@
     "build": "tsc sha256.ts && java -jar node_modules/google-closure-compiler/compiler.jar sha256.js --js_output_file sha256-min.js -O ADVANCED"
   },
   "author": "Ilja Kroonen",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "dependencies": {
     "google-closure-compiler": "^20160315.2.0"
   }
