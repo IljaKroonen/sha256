@@ -1,0 +1,60 @@
+html {
+    font-size: 100%;
+    font-family: sans-serif;
+    height: 100%;
+}
+
+body {
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+}
+
+input {
+    display: none;
+}
+
+.app-container {
+    margin: 10px;
+}
+
+.button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: teal;
+    color: white;
+    cursor: pointer;
+}
+
+.button.disabled {
+    background-color: gray;
+    cursor: default;
+}
+
+.progress {
+    height: 2rem;
+    overflow: hidden;
+}
+
+.progress>div {
+    height: 100%;
+    background-color: teal;
+    width: 0%;
+}
+
+.results {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.result-card {
+    margin: 10px;
+    border: 2px solid lightblue;
+    border-radius: 1px;
+    padding: 5px;
+    -webkit-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 5px 5px 5px 0px rgba(0,0,0,0.75);
+}
