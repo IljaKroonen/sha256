@@ -96,3 +96,31 @@ input {
 .reassuring-message {
     font-size: 0.8rem;
 }
+
+.gh-link {
+    height: 2rem;
+}
+
+.gh-link span {
+    vertical-align: middle;
+    margin: 5px;
+}
+
+.gh-link .fa {
+    font-size: 2rem;
+}
+
+.gh-link a {
+    text-decoration: none;
+    color: black;
+}
+
+.gh-link a:active {
+    color: black;
+}
+
+hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-color: lightblue;
+}
