@@ -89,7 +89,10 @@ input {
 }
 
 .name {
-    font-size: 1.2rem;
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
+}
+
+.reassuring-message {
+    font-size: 0.8rem;
 }
