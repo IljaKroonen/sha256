@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc sha256.ts && java -jar node_modules/google-closure-compiler/compiler.jar sha256.js --js_output_file sha256-min.js -O ADVANCED"
+    "build": "tsc sha256.ts && java -jar node_modules/google-closure-compiler/compiler.jar sha256.ts --js_output_file sha256-min.js -O ADVANCED  --language_in=ES6_TYPED"
   },
   "author": "Ilja Kroonen",
   "license": "MIT",
