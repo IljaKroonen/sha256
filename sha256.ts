@@ -1,4 +1,19 @@
 (function() {
+    function uint8ArrayConcat2(a: Uint8Array, b: Uint8Array) {
+        const ret = new Uint8Array(a.length + b.length);
+        ret.set(a, 0);
+        ret.set(b, a.length);
+        return ret;
+    }
+
+    function uint8ArrayConcat3(a: Uint8Array, b: Uint8Array, c: Uint8Array) {
+        const ret = new Uint8Array(a.length + b.length + c.length);
+        ret.set(a, 0);
+        ret.set(b, a.length);
+        ret.set(c, a.length + b.length);
+        return ret;
+    }
+
     const roundConstants = [
         0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
         0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
@@ -25,9 +40,10 @@
         return safeAdd4(a, b, c, safeAdd2(d, e));
     }
 
-    function messageScheduleArray(array: number[], block: number[]): void {
+
+    function messageScheduleArray(array: Uint32Array, block: Uint8Array, offset: number): void {
         for (let i = 0; i < 16; i++)
-            array[i] = block[i];
+            array[i] = (block[offset + i * 4] << 24) | (block[offset + i * 4 + 1] << 16) | (block[offset + i * 4 + 2] << 8) | block[offset + i * 4 + 3];
 
         for (let i = 16; i < 64; i++) {
             const s0 = rightRotate(array[i - 15], 7) ^ rightRotate(array[i - 15], 18) ^ (array[i - 15] >>> 3);
@@ -36,7 +52,7 @@
         }
     }
 
-    function uint64ToBinaryString(n: number): string {
+    function uint64ToUint8Array(n: number): Uint8Array {
         const b2 = n / Math.pow(2, 40);
         const b3 = (n / Math.pow(2, 32)) & 0x000000ff;
         const b4 = (n >> 24) & 0x000000ff;
@@ -44,37 +60,18 @@
         const b6 = (n >> 8) & 0x000000ff;
         const b7 = n & 0x000000ff;
 
-        return String.fromCharCode(0) + String.fromCharCode(0) + String.fromCharCode(b2) + String.fromCharCode(b3) +
-            String.fromCharCode(b4) + String.fromCharCode(b5) + String.fromCharCode(b6) + String.fromCharCode(b7);
+        return new Uint8Array([0, 0, b2, b3, b4, b5, b6, b7]);
     }
 
-    function zeroString(length: number): string {
-        if (length === 0)
-            return '';
-
-        let cs = String.fromCharCode(0);
-
-        while (cs.length * 2 < length)
-            cs += cs;
-
-        while (cs.length < length)
-            cs += String.fromCharCode(0);
-
-        return cs;
-    }
-
-    function messageAppend(length: number): string {
-        let append = String.fromCharCode(0x80);
+    function messageAppend(length: number): Uint8Array {
         let zeroesLength = 56 - (length % 64) - 1;
         if (zeroesLength < 0)
             zeroesLength = zeroesLength + 64;
 
-        append += zeroString(zeroesLength);
-        append += uint64ToBinaryString(length * 8);
-        return append;
+        return uint8ArrayConcat3(new Uint8Array([0x80]), new Uint8Array(zeroesLength), uint64ToUint8Array(length * 8));
     }
 
-    function compression(hash: number[], scheduleArray: number[]) {
+    function compression(hash: Uint32Array, scheduleArray: Uint32Array) {
         let a = hash[0];
         let b = hash[1];
         let c = hash[2];
@@ -112,22 +109,6 @@
         hash[7] = safeAdd2(hash[7], h);
     }
 
-    function stringBlockToUint32Array(str: string): number[] {
-        const ret: number[] = new Array(str.length / 4);
-
-        for (let i = 0; i < 16; i++) {
-            const b0 = str.charCodeAt(i * 4);
-            const b1 = str.charCodeAt(i * 4 + 1);
-            const b2 = str.charCodeAt(i * 4 + 2);
-            const b3 = str.charCodeAt(i * 4 + 3);
-
-            const uint32 = (b0 << 24) + (b1 << 16) + (b2 << 8) + b3;
-            ret[i] = uint32;
-        }
-
-        return ret;
-    }
-
     function uint32ToUnprefixedHexString(uint32: number) {
         if (uint32 < 0)
             uint32 += Math.pow(2, 32);
@@ -137,26 +118,26 @@
         return r;
     }
 
-    function uint32ArrayToHexString(array: number[]) {
-        return '0x' + array.map(uint32ToUnprefixedHexString).join('');
+    function uint32ArrayToHexString(array: Uint32Array) {
+        return '0x' + Array.prototype.slice.call(array).map(uint32ToUnprefixedHexString).join('');
     }
 
     class Sha256 {
         private addedLength: number;
-        private buffer: string;
-        private hash: number[];
-        private scheduleArray: number[];
+        private incompleteBlock: Uint8Array;
+        private hash: Uint32Array;
+        private scheduleArray: Uint32Array;
         private length: number;
 
         constructor(length: number) {
             this.addedLength = 0;
-            this.buffer = '';
-            this.hash = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
-            this.scheduleArray = new Array(64);
+            this.incompleteBlock = new Uint8Array(0);
+            this.hash = new Uint32Array([0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19]);
+            this.scheduleArray = new Uint32Array(64);
             this.length = length;
         }
 
-        add(part: string): void {
+        add(part: Uint8Array): void {
             this.addedLength += part.length;
 
             this.addInternal(part);
@@ -171,58 +152,66 @@
             return uint32ArrayToHexString(this.hash);
         }
 
-        private addInternal(part: string) {
-            while (part !== '') {
-                const required = 64 - this.buffer.length;
-                this.buffer += part.slice(0, required);
-                part = part.slice(required);
+        private addInternal(part: Uint8Array) {
+            let index = 0;
 
-                if (this.buffer.length === 64) {
-                    this.processBlock(this.buffer);
-                    this.buffer = '';
+            if (this.incompleteBlock.length > 0) {
+                const step = 64 - this.incompleteBlock.length;
+                index += step;
+                this.incompleteBlock = uint8ArrayConcat2(this.incompleteBlock, part.slice(0, step));
+                if (this.incompleteBlock.length === 64) {
+                    this.processBlock(this.incompleteBlock, 0);
+                    this.incompleteBlock = new Uint8Array(0);
                 }
             }
+
+            while (index + 64 <= part.length) {
+                this.processBlock(part, index);
+                index += 64;
+            }
+
+            this.incompleteBlock = part.slice(index);
         }
 
-        private processBlock(strBlock: string) {
-            const block = stringBlockToUint32Array(strBlock);
-            messageScheduleArray(this.scheduleArray, block);
+        private processBlock(block: Uint8Array, offset: number) {
+            messageScheduleArray(this.scheduleArray, block, offset);
             compression(this.hash, this.scheduleArray);
         }
     }
-    
+
     const stepSize = 1024 * 1024;
 
     function sha256(input: string | Blob, callback: (hash: string) => any, progress: (percent: number) => any) {
         if (!progress)
-            progress = () => {};
-            
+            progress = () => { };
+
         if (typeof input === 'string') {
-            const o = new Sha256(input.length);
+            throw 'not implemented for string';
+            /*const o = new Sha256(input.length);
             o.add(input);
-            callback(o.get());
+            callback(o.get());*/
         } else if (input instanceof Blob) {
             const o = new Sha256(input.size);
             const fr = new FileReader();
             let pos = 0;
             fr.addEventListener('load', () => {
-                o.add(fr.result);
+                o.add(new Uint8Array(fr.result));
                 progress(100 * pos / input.size);
                 if (pos > input.size)
                     callback(o.get());
                 else {
                     const blob = input.slice(pos, pos + stepSize);
-                    pos +=stepSize;
-                    fr.readAsBinaryString(blob);
+                    pos += stepSize;
+                    fr.readAsArrayBuffer(blob);
                 }
             });
             const blob = input.slice(pos, pos + stepSize);
             pos += stepSize;
-            fr.readAsBinaryString(blob);
+            fr.readAsArrayBuffer(blob);
         } else {
             throw new Error('Input type not supported');
         }
     }
-    
+
     window['sha256'] = sha256;
 })();
